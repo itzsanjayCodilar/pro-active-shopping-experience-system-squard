@@ -3,8 +3,7 @@ codilar hackathon
 
 Team Name - The System Squards
 
-Team Members:-
-<details><summary><b>members</b></summary>
+<details><summary><b>Team Members:-</b></summary>
 
             - Rafsal K R            - rafsal.kr@codilar.com
             - Lehan Max Dsouza      - lehanmax.d@codilar.com
