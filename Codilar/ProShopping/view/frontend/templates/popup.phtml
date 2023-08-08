@@ -1,0 +1,182 @@
+<?php
+/** @var ProShop $viewModel */
+
+use Codilar\ProShopping\ViewModel\ProShop;
+
+$viewModel = $this->getData('viewModel');
+
+if ($viewModel->isProActionUiEnabled()) {
+    ?>
+
+    <script type="text/javascript">
+        require(['jquery', // jquery Library
+
+            // Magento text translate (Validation message translte as per language)
+
+            // Jquery Validation Library
+            'jquery/ui' // Jquery UI Library
+        ], function ($) {
+            $('#pop_button').click(function () {
+                if ($(this).css("margin-left") == "300px" || $(this).css("margin-left") == "280px") {
+                    $('.popup').animate({"margin-left": '-=300'});
+                    $('#pop_button').animate({"margin-left": '-=280'});
+                } else {
+                    $('.popup').animate({"margin-left": '+=300'});
+                    $('#pop_button').animate({"margin-left": '+=280'});
+                }
+            });
+
+            $('#pop_button-right').click(function () {
+
+                if ($(this).css("margin-right") == "300px" || $(this).css("margin-right") == "280px") {
+                    $('.popup-right').animate({"margin-right": '-=300'});
+                    $('#pop_button-right').animate({"margin-right": '-=280'});
+                } else {
+                    $('.popup-right').animate({"margin-right": '+=300'});
+                    $('#pop_button-right').animate({"margin-right": '+=280'});
+                }
+            });
+
+        });
+
+    </script>
+
+    <div id="leftcontact" <?php if ($viewModel->getPopUpPosition() == 0) {
+        echo "class=popup";
+    } else {
+        echo "class=popup-right";
+    } ?>
+         data-value="hide">
+        <div id="bcontactForm" name="bMyform" class="block contactFormheader">
+
+            <?php if ($viewModel->isWelcomeMessage()) { ?>
+                <p class="welcome-message"><?= $viewModel->getWelcomeMessage() ?></p>
+                <h3><?= $viewModel->getActionWelcomeMessage() ?></h3>
+                <button class="yes confirm-button" id="yes">Purchase</button>
+                <button class="order-history confirm-button"
+                        onclick='document.getElementById("message").innerHTML = "Order History feature will be developed after winning this Hackathon!"'>
+                    Check Order History
+                </button>
+                <h2 id="message"></h2>
+            <?php } ?>
+
+            <div class="category-container"></div>
+            <div id="budget-div" style="display: none;">
+                <label for="budget">What is your budget?</label>
+                <div>
+                    <button class="budget-button" data-budget="0-5000">0-5k</button>
+                    <button class="budget-button" data-budget="5000-10000">5k-10k</button>
+                    <button class="budget-button" data-budget="10000-20000">10k-20k</button>
+                    <button class="budget-button" data-budget="20000-more">20k-More</button>
+                </div>
+            </div>
+            <!-- New div to display products -->
+            <div id="product-container"></div>
+
+        </div>
+    </div>
+
+    <div <?php if ($viewModel->getPopUpPosition() == 0) {
+        echo "class=share_box";
+    } else {
+        echo "class=share_box-right";
+    } ?>
+        <?php if ($viewModel->getPopUpPosition() == 0) {
+        echo "id=pop_button";
+    } else {
+        echo "id=pop_button-right";
+    } ?>>
+        <img src="<?php echo $this->getViewFileUrl('Codilar_ProShopping::images/tss-t.png'); ?>" id="popUpButton">
+    </div>
+
+    <?php
+} ?>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        let categories;
+        $('#yes').on('click', function () {
+            let categoryUrl = "<?= $viewModel->getCategoryUrl() ?>";
+            //disable button after click
+            $('#yes').prop('disabled', true);
+            $.ajax({
+                url: categoryUrl,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    categories = JSON.parse(response.output);
+                    categories.forEach(function (category) {
+                        let element = `<p class='category-link' data-category-id='${category.id}'>${category.name}</p>`;
+                        $('.category-container').append(element);
+                    });
+
+                    jQuery('.category-link').on('click', function () {
+                        // Get the data-category-id attribute value of the clicked element
+                        categoryId = $(this).data('category-id');
+                        // Hide the specification section if it was shown previously
+                        // Show the budget buttons
+                        $('#budget-div').show();
+                        $('#product-container').hide();
+
+                    });
+                    $('.budget-button').on('click', function () {
+                        // Get the budget value from the data attribute of the clicked button
+                        const budget = $(this).data('budget');
+
+                        // Hide the budget buttons after selecting the budget
+                        $('#budget-div').hide();
+                        $('#product-container').show();
+
+
+                        // Continue with the AJAX request and display products
+                        let products;
+                        let categoryProductUrl = "<?= $viewModel->getProductByCategoryUrl() ?>";
+                        $.ajax({
+                            url: categoryProductUrl,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {categoryId: categoryId, budget: budget},
+                            success: function (response) {
+                                products = JSON.parse(response.output);
+                                // Call function to display products in the new div
+                                displayProducts(products);
+                            },
+                            error: function (err) {
+                                console.log(err.Message);
+                            }
+                        });
+                    });
+                },
+                error: function (err) {
+                    console.log(err.Message);
+                }
+            });
+        });
+
+        function displayProducts(products) {
+            let productContainer = document.getElementById('product-container');
+            productContainer.innerHTML = '';
+
+            products.forEach(function (product) {
+                let productDiv = document.createElement('div');
+                productDiv.className = 'product-item';
+                productDiv.innerHTML = `
+            <img class="recomend-product-img" src="${product.image}" alt="${product.sku}" />
+            <div class="recomend-product-details">
+                    <p class="recomend-product-sku">Sku: ${product.sku}</p>
+                    <p class="recomend-product-price">Price: ${Math.round(product.price)}</p>
+            </div>
+        `;
+                productContainer.appendChild(productDiv);
+            });
+
+            // Set a fixed height for the product container
+            productContainer.style.height = '300px'; // Adjust the height as needed
+
+            // Enable vertical scrolling for the product container
+            productContainer.style.overflowY = 'scroll';
+        }
+    });
+</script>
+
