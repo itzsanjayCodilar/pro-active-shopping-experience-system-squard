@@ -47,9 +47,8 @@
 </details>   
 
 <details><summary><b>Ppt:-</b></summary>
-            
-        https://docs.google.com/presentation/d/1f9TKOA__aLlNC5IkpFFvvKQWg4HPssLmiXZMZybTx-M/edit?usp=sharing
-        
+   Click Here:-
+      https://docs.google.com/presentation/d/1f9TKOA__aLlNC5IkpFFvvKQWg4HPssLmiXZMZybTx-M/edit?usp=sharing
 </details>
 
 <details><summary><b>Code View:-</b></summary>
