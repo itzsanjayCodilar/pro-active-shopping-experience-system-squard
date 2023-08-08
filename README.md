@@ -53,6 +53,6 @@
 </details>
 
 <details><summary><b>Code View:-</b></summary>
-    Open the link in browser:-  
+    Click Here:-  
           https://github1s.com/itzsanjayCodilar/pro-active-shopping-experience-system-squard
  </details>
