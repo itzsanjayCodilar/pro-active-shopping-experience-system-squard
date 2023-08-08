@@ -1,8 +1,8 @@
 # pro-active-shopping-experience-system-squard
 
-<b>Codilar hackathon</b>
+###Codilar hackathon
 
-<b>Team Name - The System Squards</b>
+####Team Name - The System Squards</b>
 
 <details><summary><b>Team Members:-</b></summary>
 
